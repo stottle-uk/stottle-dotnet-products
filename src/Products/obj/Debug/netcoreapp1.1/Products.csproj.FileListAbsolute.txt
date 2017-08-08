@@ -1,0 +1,6 @@
+K:\Dev\middleware\src\Products\bin\Debug\netcoreapp1.1\Products.deps.json
+K:\Dev\middleware\src\Products\obj\Debug\netcoreapp1.1\Products.AssemblyInfo.cs
+K:\Dev\middleware\src\Products\bin\Debug\netcoreapp1.1\Products.dll
+K:\Dev\middleware\src\Products\bin\Debug\netcoreapp1.1\Products.pdb
+K:\Dev\middleware\src\Products\obj\Debug\netcoreapp1.1\Products.dll
+K:\Dev\middleware\src\Products\obj\Debug\netcoreapp1.1\Products.pdb
