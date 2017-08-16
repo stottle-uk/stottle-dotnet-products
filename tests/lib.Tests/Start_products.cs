@@ -12,26 +12,18 @@ namespace Middleware.lib.Tests
         public void PassingTest()
         {
             var builder = new WebHostBuilder()
+                .UseEnvironment("unittesting")
                 .UseKestrel()
                 .UseStartup<Startup>()
-                .UseUrls("http://*:" + 5000.ToString())
-                .ConfigureServices(s => s.AddSingleton<IProductOptions, ProductOptions>())
-                .ConfigureServices(s => s.AddSingleton<IProductProcessor, ProducerProcessor>());
+                .UseUrls("http://*:" + 5000.ToString());
 
             var server = new TestServer(builder);
 
             var client = server.CreateClient();
 
-            var result = client.GetAsync("/").Result;
+            var result = client.GetAsync("api/products").Result;
 
-            Startup.ApplicationCenter.
-
-            Assert.Equal(result.Content.ReadAsStringAsync().Result, "Add(2, 2)");
-        }
-
-        int Add(int x, int y)
-        {
-            return x + y;
+            Assert.Equal("Hello world again", result.Content.ReadAsStringAsync().Result);
         }
     }
 }

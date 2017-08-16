@@ -8590,16 +8590,16 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "k:\\Dev\\middleware\\src\\Products\\Products.csproj",
+      "projectUniqueName": "K:\\Dev\\middleware\\src\\Products\\Products.csproj",
       "projectName": "stottle-products",
-      "projectPath": "k:\\Dev\\middleware\\src\\Products\\Products.csproj",
-      "outputPath": "k:\\Dev\\middleware\\src\\Products\\obj\\",
+      "projectPath": "K:\\Dev\\middleware\\src\\Products\\Products.csproj",
+      "outputPath": "K:\\Dev\\middleware\\src\\Products\\obj\\",
       "projectStyle": "PackageReference",
       "originalTargetFrameworks": [
         "netcoreapp1.1"
       ],
       "files": {
-        "lib/netcoreapp1.1/stottle-products.dll": "k:\\Dev\\middleware\\src\\Products\\bin\\placeholder\\netcoreapp1.1\\stottle-products.dll"
+        "lib/netcoreapp1.1/stottle-products.dll": "K:\\Dev\\middleware\\src\\Products\\bin\\placeholder\\netcoreapp1.1\\stottle-products.dll"
       },
       "frameworks": {
         "netcoreapp1.1": {

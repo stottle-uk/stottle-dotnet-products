@@ -3,24 +3,45 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Middleware.Products;
+using Middleware.Products.Extesions;
 
-namespace Middleware.lib
+namespace Middleware
 {
     public class Startup
     {
+        public IContainer ApplicationContainer { get; private set; }
+
+        public Startup(IHostingEnvironment env)
+        {
+            var builder = new ConfigurationBuilder()
+                .AddEnvironmentVariables();
+        }
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IProductOptions, ProductOptions>();
-            services.AddSingleton<IProductProcessor, ProducerProcessor>();
+            services.AddMvc();
+
+            var builder = new ContainerBuilder();
+            builder.Populate(services);
+
+            builder.RegisterType<ImageWriter>().As<IWriter>().SingleInstance();
+            builder.RegisterType<ProductOptions>().As<IProductOptions>().SingleInstance();
+            builder.RegisterType<ProducerProcessor>().As<IProductProcessor>().SingleInstance();
+
+            this.ApplicationContainer = builder.Build();
+
+            return new AutofacServiceProvider(this.ApplicationContainer);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -28,33 +49,26 @@ namespace Middleware.lib
         {
             loggerFactory.AddConsole();
 
-            var log = loggerFactory.CreateLogger("");
-
-            log.LogDebug(new EventId(), new Exception(), $"{File.Exists("C:\\temp\\MyWildPacks_Email_636365273012828222.txt")}");
-
-            //var serverAddressesFeature = app.ServerFeatures.Get<IServerAddressesFeature>();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            app.Use(async (context, next) =>
+            if (env.IsEnvironment("unittesting"))
             {
-                await context.Response.WriteAsync("Hello from conponent 1!\n");
-                await next.Invoke();
-                await context.Response.WriteAsync("Hello from conponent 1 again!\n");
-            });
+                throw new Exception();
+            }
 
-            app.UseProductImporterMiddleware();
-
-            app.Run(async (context) =>
-            {
-                await context.Response.WriteAsync("Hello World!\n");
-            });
-
+            app
+                .UseProductImporterMiddleware()
+                .UseMvcWithDefaultRoute();
         }
 
-
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterType<IWriter>().As<ImageWriter>().SingleInstance();
+            builder.RegisterType<IProductOptions>().As<ProductOptions>().SingleInstance();
+            builder.RegisterType<IProductProcessor>().As<ProducerProcessor>().SingleInstance();
+        }
     }
 }

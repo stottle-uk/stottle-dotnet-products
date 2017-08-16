@@ -1,10 +1,10 @@
 K:\Dev\middleware\src\lib\bin\Debug\netcoreapp1.1\lib.deps.json
 K:\Dev\middleware\src\lib\bin\Debug\netcoreapp1.1\lib.runtimeconfig.json
 K:\Dev\middleware\src\lib\bin\Debug\netcoreapp1.1\lib.runtimeconfig.dev.json
-K:\Dev\middleware\src\lib\obj\Debug\netcoreapp1.1\lib.AssemblyInfo.cs
 K:\Dev\middleware\src\lib\bin\Debug\netcoreapp1.1\lib.dll
 K:\Dev\middleware\src\lib\bin\Debug\netcoreapp1.1\lib.pdb
 K:\Dev\middleware\src\lib\bin\Debug\netcoreapp1.1\Products.dll
 K:\Dev\middleware\src\lib\bin\Debug\netcoreapp1.1\Products.pdb
+K:\Dev\middleware\src\lib\obj\Debug\netcoreapp1.1\lib.AssemblyInfo.cs
 K:\Dev\middleware\src\lib\obj\Debug\netcoreapp1.1\lib.dll
 K:\Dev\middleware\src\lib\obj\Debug\netcoreapp1.1\lib.pdb
