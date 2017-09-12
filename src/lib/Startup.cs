@@ -26,6 +26,7 @@ namespace Middleware
             var builder = new ConfigurationBuilder()
                 .AddEnvironmentVariables();
         }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public IServiceProvider ConfigureServices(IServiceCollection services)
@@ -36,8 +37,12 @@ namespace Middleware
             builder.Populate(services);
 
             builder.RegisterType<ImageWriter>().As<IWriter>().SingleInstance();
+            builder.RegisterType<ProductDataWriter>().As<IWriter>().SingleInstance();
             builder.RegisterType<ProductOptions>().As<IProductOptions>().SingleInstance();
             builder.RegisterType<ProducerProcessor>().As<IProductProcessor>().SingleInstance();
+            builder.RegisterType<DbContext>().As<IDbContext>().SingleInstance();
+
+            builder.Register(ctx => new ProducerProcessor(new ProductOptions(), new ImageWriter(new DbContext()), new ProductDataWriter()));
 
             this.ApplicationContainer = builder.Build();
 
@@ -54,11 +59,6 @@ namespace Middleware
                 app.UseDeveloperExceptionPage();
             }
 
-            if (env.IsEnvironment("unittesting"))
-            {
-                throw new Exception();
-            }
-
             app
                 .UseProductImporterMiddleware()
                 .UseMvcWithDefaultRoute();
@@ -66,9 +66,10 @@ namespace Middleware
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.RegisterType<IWriter>().As<ImageWriter>().SingleInstance();
-            builder.RegisterType<IProductOptions>().As<ProductOptions>().SingleInstance();
-            builder.RegisterType<IProductProcessor>().As<ProducerProcessor>().SingleInstance();
+            // builder.RegisterType<IWriter>().As<ImageWriter>().SingleInstance();
+            // builder.RegisterType<IProductOptions>().As<ProductOptions>().SingleInstance();
+            // builder.RegisterType<IProductProcessor>().As<ProducerProcessor>().SingleInstance();
+            // builder.RegisterType<IDbContext>().As<DbContext>().SingleInstance();
         }
     }
 }

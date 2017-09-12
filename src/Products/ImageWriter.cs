@@ -1,12 +1,29 @@
 using System;
+using System.IO;
+using System.Linq;
+using Middleware.Products.Extensions;
 
 namespace Middleware.Products
 {
     public class ImageWriter : IWriter
     {
-        public string Save(string folderPath)
+        private readonly IDbContext _dbContext;
+
+        public ImageWriter(IDbContext dbContext)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
+        }
+
+        public void Save(string folderPath)
+        {
+            var streams = folderPath
+                .ConvertToStreams();
+
+            foreach (var stream in streams)
+            {
+                _dbContext.Save(stream);
+            }
+
         }
     }
 }

@@ -7,18 +7,33 @@ namespace Middleware.Products.Extensions
 {
     public static class StringExtensions
     {
-        public static IEnumerable<string> GetDirectoryItems(this IEnumerable<string> folderPaths, IEnumerable<string> folderNames, Action<string> directoryNotFound) =>
+        public static IEnumerable<Stream> ConvertToStreams(this string filePath)
+        {
+            return Directory
+                .GetFiles(filePath)
+                .Select(file => file.ConvertToStream());
+        }
+
+        public static Stream ConvertToStream(this string filePath)
+        {
+            using (var stream = new MemoryStream())
+            {
+                var bytes = File.ReadAllBytes(filePath);
+                stream.Write(bytes, 0, bytes.Length);
+                return stream;
+            };
+        }
+
+        public static IEnumerable<KeyValuePair<string, string>> GetDirectorySubFolders(this IEnumerable<string> folderPaths, IEnumerable<string> folderNames) =>
+            folderPaths.GetDirectorySubFolders(folderNames, path => { });
+
+        public static IEnumerable<KeyValuePair<string, string>> GetDirectorySubFolders(this IEnumerable<string> folderPaths, IEnumerable<string> folderNames, Action<string> directoryNotFound) =>
             folderPaths
-                .SelectMany(folder => folder
-                    .GetFolders(folderNames, directoryNotFound));
+                .SelectMany(folder =>
+                     folderNames.Select(folderName => new KeyValuePair<string, string>(folderName, folder.WithSubFolder(folderName).ValidatePath(directoryNotFound)))
+                );
 
-        public static IEnumerable<string> GetFolders(this string folderPath, IEnumerable<string> folderNames, Action<string> directoryNotFound) =>
-            folderNames
-                .Select(folderName => folderPath
-                    .WithSubFolder(folderName)
-                    .ValidatePath(directoryNotFound));
-
-        public static string WithSubFolder(this string path, string name) => Path.Combine(path, name);
+        private static string WithSubFolder(this string path, string name) => Path.Combine(path, name);
 
         private static string ValidatePath(this string path, Action<string> directoryNotFound)
         {
@@ -27,7 +42,5 @@ namespace Middleware.Products.Extensions
 
             return path;
         }
-
-
     }
 }

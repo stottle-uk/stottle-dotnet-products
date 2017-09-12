@@ -7,7 +7,7 @@ namespace Middleware.Products
     {
         public string Path 
         { 
-            get => "E:\\Data\\";
+            get => "E:\\Data2\\";
         }
     }
 }

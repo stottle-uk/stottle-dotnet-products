@@ -11,19 +11,19 @@ namespace Middleware.Products
         private readonly IProductOptions _options;
         private readonly IWriter _imageWriter;
         // private readonly IWriter _documentWriter;
-        // private readonly IWriter _productDataWriter;
+        private readonly IWriter _productDataWriter;
 
         public ProducerProcessor(
             IProductOptions options,
-            IWriter imageWriter
+            IWriter imageWriter,
             // IWriter documentWriter,
-            // IWriter productDataWriter
+            IWriter productDataWriter
             )
         {
             _options = options;
             _imageWriter = imageWriter;
             // _documentWriter = documentWriter;
-            // _productDataWriter = productDataWriter;
+            _productDataWriter = productDataWriter;
         }
 
         public void Start()
@@ -33,13 +33,32 @@ namespace Middleware.Products
                 throw new FileNotFoundException(_options.Path);
             }
 
-            var directoryItems = new [] { "Documents", "Images", "product.json" };
+            var directoryItems = new [] { "Documents", "Images" };
 
-            var t = Directory
-                .GetDirectories(_options.Path)
-                .GetDirectoryItems(directoryItems, (path) => throw new FileNotFoundException(path))
-                .Select(folder => _imageWriter.Save(folder))
+            var t = new DirectoryInfo(_options.Path)
+                .EnumerateDirectories()
+                .Select(fi => fi.FullName)
+                .GetDirectorySubFolders(directoryItems, path => throw new FileNotFoundException(path))
+                .Select(item => {
+                    switch (item.Key)
+                    {
+                        case "Images":
+                            _imageWriter.Save(item.Value);
+                            break;
+                    }
+                    return item;
+                })
                 .ToList();
+
+            var w = new DirectoryInfo(_options.Path)
+                .EnumerateDirectories()
+                .Select(fi => fi.FullName)
+                .Select(folderPath => $"{folderPath}/product.json")
+                .Select(item => {
+                    _productDataWriter.Save(item);
+                    return item;
+                })
+                .ToList();                
         }
     }
 }
