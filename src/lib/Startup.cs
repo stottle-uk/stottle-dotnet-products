@@ -1,25 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Hosting.Server.Features;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Middleware.Products;
+using Middleware.Products.Data;
+using Middleware.Products.Data.Models;
 using Middleware.Products.Extesions;
+using Middleware.Products.Images;
 
 namespace Middleware
 {
     public class Startup
     {
-        public IContainer ApplicationContainer { get; private set; }
+        public static IContainer ApplicationContainer { get; private set; }
 
         public Startup(IHostingEnvironment env)
         {
@@ -32,21 +29,16 @@ namespace Middleware
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddAutofac();
 
             var builder = new ContainerBuilder();
             builder.Populate(services);
 
-            builder.RegisterType<ImageWriter>().As<IWriter>().SingleInstance();
-            builder.RegisterType<ProductDataWriter>().As<IWriter>().SingleInstance();
-            builder.RegisterType<ProductOptions>().As<IProductOptions>().SingleInstance();
-            builder.RegisterType<ProducerProcessor>().As<IProductProcessor>().SingleInstance();
-            builder.RegisterType<DbContext>().As<IDbContext>().SingleInstance();
+            builder.RegisterModule(new ProductsModule(""));
 
-            builder.Register(ctx => new ProducerProcessor(new ProductOptions(), new ImageWriter(new DbContext()), new ProductDataWriter()));
+            ApplicationContainer = builder.Build();
 
-            this.ApplicationContainer = builder.Build();
-
-            return new AutofacServiceProvider(this.ApplicationContainer);
+            return new AutofacServiceProvider(ApplicationContainer);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,14 +54,6 @@ namespace Middleware
             app
                 .UseProductImporterMiddleware()
                 .UseMvcWithDefaultRoute();
-        }
-
-        public void ConfigureContainer(ContainerBuilder builder)
-        {
-            // builder.RegisterType<IWriter>().As<ImageWriter>().SingleInstance();
-            // builder.RegisterType<IProductOptions>().As<ProductOptions>().SingleInstance();
-            // builder.RegisterType<IProductProcessor>().As<ProducerProcessor>().SingleInstance();
-            // builder.RegisterType<IDbContext>().As<DbContext>().SingleInstance();
         }
     }
 }

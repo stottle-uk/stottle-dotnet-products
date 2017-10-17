@@ -1,7 +1,9 @@
+using System.Threading.Tasks;
+
 namespace Middleware.Products
 {
     public interface IProductProcessor
     {
-        void Start();
+        Task StartAsync();
     }
 }

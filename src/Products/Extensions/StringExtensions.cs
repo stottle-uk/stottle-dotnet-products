@@ -24,6 +24,12 @@ namespace Middleware.Products.Extensions
             };
         }
 
+        public static IEnumerable<string> GetSubDirectory(this IEnumerable<string> folderPaths, string directoryName, Action<string> directoryNotFound) =>
+            folderPaths
+                .Select(folder => folder
+                    .WithSubFolder(directoryName)
+                    .ValidatePath(directoryNotFound));
+
         public static IEnumerable<KeyValuePair<string, string>> GetDirectorySubFolders(this IEnumerable<string> folderPaths, IEnumerable<string> folderNames) =>
             folderPaths.GetDirectorySubFolders(folderNames, path => { });
 

@@ -2,8 +2,8 @@ using System.Threading.Tasks;
 
 namespace Middleware.Products
 {
-    public interface IWriter<T>
+    public interface IReader<T>
     {
-        Task SaveAsync(T item);
+        Task<T> ReadAsync(string id);
     }
 }
