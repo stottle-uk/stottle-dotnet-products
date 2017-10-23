@@ -23,12 +23,12 @@ namespace Middleware.Products.Data.Db
         {
             var filter = Builders<BrandbankWrapped>.Filter.Eq(p => p.Pvid, pvid);
             var result = await _collection.FindAsync(filter).ConfigureAwait(false);
-            return await result.FirstOrDefaultAsync();
+            return await result.FirstOrDefaultAsync().ConfigureAwait(false);
         }
 
         public async Task SaveAsync(BrandbankWrapped item)
         {
-            await _collection.InsertOneAsync(item);
+            await _collection.InsertOneAsync(item).ConfigureAwait(false);
         }
 
     }

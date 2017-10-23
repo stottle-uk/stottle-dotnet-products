@@ -6,12 +6,15 @@ using MongoDB.Driver;
 using System.Linq;
 using Middleware.Products.Data.Models;
 using Middleware.Products;
+using Middleware.Products.Images.Models;
 
 namespace Middleware.lib.Tests
 {
     public class Class1
     {
         private IReader<BrandbankWrapped> _dbStore => Startup.ApplicationContainer.Resolve<IReader<BrandbankWrapped>>();
+
+        private IReader<ImageWrapped> _imageStore => Startup.ApplicationContainer.Resolve<IReader<ImageWrapped>>();
 
         [Fact]
         public void PassingTest()
@@ -34,6 +37,10 @@ namespace Middleware.lib.Tests
 
             var t = _dbStore.ReadAsync("3988596").Result;
             Assert.Equal("3988596", t.Pvid);
+
+            var q = _imageStore.ReadAsync("3988596_T74").Result;
+            Assert.Equal("3988596_T74", q.Filename);
+            //3988596_T74
 
         }
     }

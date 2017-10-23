@@ -1,5 +1,8 @@
+using System.IO;
 using Autofac;
 using Middleware.Products.Data.Models;
+using Middleware.Products.Images;
+using Middleware.Products.Images.Models;
 using MongoDB.Driver;
 
 namespace Middleware.Products
@@ -25,9 +28,14 @@ namespace Middleware.Products
             else
             {
                 builder.Register(ctx => new MongoClient("mongodb://192.168.1.72:27017").GetDatabase("Products")).As<IMongoDatabase>();
+
                 builder.RegisterType<Data.Db.MongoDbStore>()
                     .As<IWriter<BrandbankWrapped>>()
                     .As<IReader<BrandbankWrapped>>();
+
+                builder.RegisterType<Images.Db.MongoImageStore>()
+                    .As<IWriter<ImageWrapped>>()
+                    .As<IReader<ImageWrapped>>();                    
             }
 
             builder.RegisterType<ProductOptions>().As<IProductOptions>();

@@ -1,9 +1,4 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Middleware.Products.Data.Models;
 using MongoDB.Bson;
-using MongoDB.Driver;
 
 namespace Middleware.Products.Data.Models
 {
